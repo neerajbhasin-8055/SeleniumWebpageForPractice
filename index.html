@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Selenium Practice Arena v3.0</title>
+    <title>Ultimate Selenium Practice Arena v3.1</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #333; margin: 0; padding: 20px; }
         h1 { text-align: center; color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
@@ -43,7 +43,7 @@
 </head>
 <body>
 
-    <h1>Ultimate Selenium Practice Arena (v3.0)</h1>
+    <h1>Ultimate Selenium Practice Arena (v3.1)</h1>
 
     <div class="level-container">
         <h2>Level 1: Basic (Locators, Typing, Clicking)</h2>
@@ -82,9 +82,9 @@
 
         <div class="component">
             <label><strong>4. JavaScript Alerts:</strong></label><br>
-            <button onclick="showResult(4, 'Simple Alert Triggered!'); alert('This is a simple alert!');">Simple Alert</button>
-            <button onclick="let res = confirm('Do you accept the terms?'); showResult(4, 'Confirm Alert clicked. You chose: ' + (res ? 'OK' : 'Cancel'));">Confirm Alert</button>
-            <button onclick="let res = prompt('Enter your automation tool name:'); showResult(4, 'Prompt Alert filled. You typed: ' + res);">Prompt Alert</button>
+            <button onclick="showResult(4, 'Simple Alert Triggered!'); setTimeout(()=>alert('This is a simple alert!'), 100);">Simple Alert</button>
+            <button onclick="setTimeout(()=>{let res = confirm('Do you accept the terms?'); showResult(4, 'Confirm Alert clicked. You chose: ' + (res ? 'OK' : 'Cancel'));}, 100)">Confirm Alert</button>
+            <button onclick="setTimeout(()=>{let res = prompt('Enter your automation tool name:'); showResult(4, 'Prompt Alert filled. You typed: ' + res);}, 100)">Prompt Alert</button>
             <div class="result-box" id="res-4">Action Result: Awaiting Interaction...</div>
         </div>
 
@@ -121,7 +121,7 @@
             <button onclick="showResult(8, 'Opened New Tab!'); window.open('https://www.selenium.dev', '_blank');" id="new-tab-btn">Open Selenium Official (New Tab)</button><br><br>
             <p><strong>Embedded iFrame:</strong></p>
             <iframe id="practice-iframe" width="100%" height="120px" style="border:2px solid #3498db; border-radius: 5px;" 
-                srcdoc="<html><body style='background-color:#e8f4f8; text-align:center; font-family:sans-serif;'><h4>I am inside an iFrame</h4><button id='iframe-button' style='padding:8px; cursor:pointer;' onclick='window.parent.showResult(8, &#39;Clicked the button INSIDE the iFrame!&#39;)'>Click Me (Inside Frame)</button></body></html>">
+                srcdoc="<html><body style='background-color:#e8f4f8; text-align:center; font-family:sans-serif;'><h4>I am inside an iFrame</h4><button id='iframe-button' style='padding:8px; cursor:pointer;' onclick='window.parent.postMessage(&quot;iframe_button_clicked&quot;, &quot;*&quot;)'>Click Me (Inside Frame)</button></body></html>">
             </iframe>
             <div class="result-box" id="res-8">Action Result: Awaiting Interaction...</div>
         </div>
@@ -184,6 +184,14 @@
             document.getElementById("res-" + componentId).innerText = "Action Result: " + message;
         }
 
+        // --- NEW: LISTENER FOR IFRAME MESSAGES ---
+        // This safely bypasses the local file:// CORS restrictions
+        window.addEventListener("message", function(event) {
+            if (event.data === "iframe_button_clicked") {
+                showResult(8, "Clicked the button INSIDE the iFrame!");
+            }
+        });
+
         // Drag and Drop
         function allowDrop(ev) { ev.preventDefault(); }
         function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
@@ -232,7 +240,6 @@
             </style>
             <button id="shadow-target-btn">Click me! I am inside a Shadow DOM!</button>
         `;
-        // Add listener to shadow DOM button
         shadowRoot.getElementById('shadow-target-btn').addEventListener('click', function() {
             showResult(11, "Success! You pierced the Shadow DOM and clicked the button!");
         });
