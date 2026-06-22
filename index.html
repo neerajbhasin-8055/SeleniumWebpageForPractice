@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Selenium Practice Arena v2.0</title>
+    <title>Ultimate Selenium Practice Arena v3.0</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #333; margin: 0; padding: 20px; }
         h1 { text-align: center; color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
@@ -12,10 +12,14 @@
         .component { margin-bottom: 20px; padding: 15px; border: 1px dashed #bdc3c7; border-radius: 8px; background-color: #fdfdfd; position: relative; }
         button, select, input { padding: 8px 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
         button:hover { background-color: #e0e0e0; }
+        input[type="text"] { cursor: text; }
+        
+        /* Result Box Styling */
+        .result-box { margin-top: 15px; padding: 10px; background-color: #e8f8f5; border-left: 4px solid #1abc9c; color: #16a085; font-family: monospace; font-size: 14px; border-radius: 3px; display: block; }
         
         /* Drag and Drop styling */
-        #draggable { width: 100px; height: 50px; background-color: #3498db; color: white; text-align: center; line-height: 50px; cursor: grab; border-radius: 5px; }
-        #droppable { width: 150px; height: 100px; background-color: #ecf0f1; border: 2px dashed #7f8c8d; text-align: center; line-height: 100px; margin-top: 10px; border-radius: 5px; }
+        #draggable { width: 100px; height: 50px; background-color: #3498db; color: white; text-align: center; line-height: 50px; cursor: grab; border-radius: 5px; display: inline-block; }
+        #droppable { width: 150px; height: 100px; background-color: #ecf0f1; border: 2px dashed #7f8c8d; text-align: center; line-height: 100px; margin-top: 10px; border-radius: 5px; display: inline-block; vertical-align: top; margin-left: 20px;}
         
         /* Custom Dropdown styling */
         .custom-dropdown { position: relative; display: inline-block; }
@@ -39,7 +43,7 @@
 </head>
 <body>
 
-    <h1>Ultimate Selenium Practice Arena (v2.0)</h1>
+    <h1>Ultimate Selenium Practice Arena (v3.0)</h1>
 
     <div class="level-container">
         <h2>Level 1: Basic (Locators, Typing, Clicking)</h2>
@@ -47,26 +51,29 @@
         <div class="component">
             <label><strong>1. Text Box (ID & Name):</strong></label><br>
             <input type="text" id="username" name="user_name" placeholder="Enter Username">
-            <button id="submit-btn" style="background-color: #2ecc71; color: white; border: none;">Submit</button>
+            <button id="submit-btn" style="background-color: #2ecc71; color: white; border: none;" onclick="showResult(1, 'Form Submitted! Username entered: ' + document.getElementById('username').value)">Submit</button>
+            <div class="result-box" id="res-1">Action Result: Awaiting Interaction...</div>
         </div>
 
         <div class="component">
             <label><strong>2. Radio Buttons & Checkboxes:</strong></label><br>
-            <input type="radio" id="male" name="gender" value="Male"> <label for="male">Male</label>
-            <input type="radio" id="female" name="gender" value="Female"> <label for="female">Female</label>
+            <input type="radio" id="male" name="gender" value="Male" onchange="showResult(2, 'Radio Selected: Male')"> <label for="male">Male</label>
+            <input type="radio" id="female" name="gender" value="Female" onchange="showResult(2, 'Radio Selected: Female')"> <label for="female">Female</label>
             <br><br>
-            <input type="checkbox" id="hobby1" value="Coding"> <label for="hobby1">Coding</label>
-            <input type="checkbox" id="hobby2" value="Reading"> <label for="hobby2">Reading</label>
+            <input type="checkbox" id="hobby1" value="Coding" onchange="showResult(2, 'Checkbox toggled: Coding (' + this.checked + ')')"> <label for="hobby1">Coding</label>
+            <input type="checkbox" id="hobby2" value="Reading" onchange="showResult(2, 'Checkbox toggled: Reading (' + this.checked + ')')"> <label for="hobby2">Reading</label>
+            <div class="result-box" id="res-2">Action Result: Awaiting Interaction...</div>
         </div>
 
         <div class="component">
             <label><strong>3. Standard Dropdown (Select Class):</strong></label><br>
-            <select id="country-select">
+            <select id="country-select" onchange="showResult(3, 'Dropdown Selected: ' + this.options[this.selectedIndex].text)">
                 <option value="" disabled selected>Select a country</option>
                 <option value="usa">USA</option>
                 <option value="india">India</option>
                 <option value="uk">UK</option>
             </select>
+            <div class="result-box" id="res-3">Action Result: Awaiting Interaction...</div>
         </div>
     </div>
 
@@ -75,22 +82,25 @@
 
         <div class="component">
             <label><strong>4. JavaScript Alerts:</strong></label><br>
-            <button onclick="alert('This is a simple alert!')">Simple Alert</button>
-            <button onclick="confirm('Do you accept the terms?')">Confirm Alert</button>
-            <button onclick="prompt('Enter your automation tool name:')">Prompt Alert</button>
+            <button onclick="showResult(4, 'Simple Alert Triggered!'); alert('This is a simple alert!');">Simple Alert</button>
+            <button onclick="let res = confirm('Do you accept the terms?'); showResult(4, 'Confirm Alert clicked. You chose: ' + (res ? 'OK' : 'Cancel'));">Confirm Alert</button>
+            <button onclick="let res = prompt('Enter your automation tool name:'); showResult(4, 'Prompt Alert filled. You typed: ' + res);">Prompt Alert</button>
+            <div class="result-box" id="res-4">Action Result: Awaiting Interaction...</div>
         </div>
 
         <div class="component">
             <label><strong>5. Mouse Hover (Tooltip):</strong></label><br>
-            <div class="tooltip">Hover over me!
+            <div class="tooltip" onmouseover="showResult(5, 'Mouse Hover detected! Tooltip is now visible.')">Hover over me!
                 <span class="tooltiptext" id="hidden-tooltip">You found the secret!</span>
             </div>
+            <div class="result-box" id="res-5">Action Result: Awaiting Interaction...</div>
         </div>
 
         <div class="component">
             <label><strong>6. Drag and Drop (Actions Class):</strong></label><br>
             <div id="draggable" draggable="true" ondragstart="drag(event)">Drag Me</div>
             <div id="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Drop Here</div>
+            <div class="result-box" id="res-6">Action Result: Awaiting Interaction...</div>
         </div>
 
         <div class="component">
@@ -103,15 +113,17 @@
                     <li onclick="selectItem('Mango')">Mango</li>
                 </ul>
             </div>
+            <div class="result-box" id="res-7">Action Result: Awaiting Interaction...</div>
         </div>
 
         <div class="component">
             <label><strong>8. Windows & iFrames:</strong></label><br>
-            <button onclick="window.open('https://www.selenium.dev', '_blank')" id="new-tab-btn">Open Selenium Official (New Tab)</button><br><br>
+            <button onclick="showResult(8, 'Opened New Tab!'); window.open('https://www.selenium.dev', '_blank');" id="new-tab-btn">Open Selenium Official (New Tab)</button><br><br>
             <p><strong>Embedded iFrame:</strong></p>
             <iframe id="practice-iframe" width="100%" height="120px" style="border:2px solid #3498db; border-radius: 5px;" 
-                srcdoc="<html><body style='background-color:#e8f4f8; text-align:center; font-family:sans-serif;'><h4>I am inside an iFrame</h4><button id='iframe-button' style='padding:8px; cursor:pointer;'>Click Me (Inside Frame)</button></body></html>">
+                srcdoc="<html><body style='background-color:#e8f4f8; text-align:center; font-family:sans-serif;'><h4>I am inside an iFrame</h4><button id='iframe-button' style='padding:8px; cursor:pointer;' onclick='window.parent.showResult(8, &#39;Clicked the button INSIDE the iFrame!&#39;)'>Click Me (Inside Frame)</button></body></html>">
             </iframe>
+            <div class="result-box" id="res-8">Action Result: Awaiting Interaction...</div>
         </div>
     </div>
 
@@ -121,7 +133,7 @@
         <div class="component">
             <label><strong>9. Custom Date Picker (Actions Class Challenge):</strong></label><br>
             <p style="font-size: 12px; color: gray; margin-top: 0;">Automate clicking "Next" to find your target month, then click the day using XPath!</p>
-            <input type="text" id="datepicker-input" readonly placeholder="Click to Select Date" onclick="toggleCalendar()">
+            <input type="text" id="datepicker-input" readonly placeholder="Click to Select Date" onclick="toggleCalendar(); showResult(9, 'Calendar Opened!');">
             
             <div id="calendar-container">
                 <div class="calendar-header">
@@ -135,35 +147,43 @@
                 <div id="days-grid" class="days-grid">
                     </div>
             </div>
+            <div class="result-box" id="res-9">Action Result: Awaiting Interaction...</div>
         </div>
 
         <div class="component">
             <label><strong>10. Explicit Waits (Delayed Element):</strong></label><br>
             <button onclick="startTimer()" id="start-wait-btn">Start 5-Second Timer</button>
-            <button id="hidden-target-btn" style="display:none; background-color:#e74c3c; color:white; border:none; margin-left: 10px;">I appeared after 5 seconds!</button>
+            <button id="hidden-target-btn" style="display:none; background-color:#e74c3c; color:white; border:none; margin-left: 10px;" onclick="showResult(10, 'Success! You waited and clicked the hidden element.')">I appeared after 5 seconds!</button>
+            <div class="result-box" id="res-10">Action Result: Awaiting Interaction...</div>
         </div>
 
         <div class="component">
             <label><strong>11. Shadow DOM:</strong></label><br>
             <p style="font-size: 12px; color: gray; margin-top: 0;">Use driver.getShadowRoot() to pierce the DOM and click the button.</p>
             <div id="shadow-host"></div>
+            <div class="result-box" id="res-11">Action Result: Awaiting Interaction...</div>
         </div>
 
         <div class="component">
             <label><strong>12. Broken & Valid Links (HTTP Responses):</strong></label><br>
             <p style="font-size: 12px; color: gray; margin-top: 0;">Extract the 'href' and use HttpURLConnection to verify the status code.</p>
-            <ul>
-                <li><a href="https://httpbin.org/status/200" target="_blank">Valid Link 1 (httpbin 200)</a></li>
-                <li><a href="https://the-internet.herokuapp.com/status_codes/200" target="_blank">Valid Link 2 (Herokuapp 200)</a></li>
-                
-                <li><a href="https://httpbin.org/status/400" target="_blank">Broken Link (Bad Request - 400)</a></li>
-                <li><a href="https://httpbin.org/status/404" target="_blank">Broken Link (Not Found - 404)</a></li>
-                <li><a href="https://the-internet.herokuapp.com/status_codes/500" target="_blank">Broken Link (Server Error - 500)</a></li>
+            <ul id="link-list">
+                <li><a href="https://httpbin.org/status/200" target="_blank" onclick="showResult(12, 'Navigated to Valid Link (200)')">Valid Link 1 (httpbin 200)</a></li>
+                <li><a href="https://the-internet.herokuapp.com/status_codes/200" target="_blank" onclick="showResult(12, 'Navigated to Valid Link (200)')">Valid Link 2 (Herokuapp 200)</a></li>
+                <li><a href="https://httpbin.org/status/400" target="_blank" onclick="showResult(12, 'Navigated to Broken Link (400)')">Broken Link (Bad Request - 400)</a></li>
+                <li><a href="https://httpbin.org/status/404" target="_blank" onclick="showResult(12, 'Navigated to Broken Link (404)')">Broken Link (Not Found - 404)</a></li>
+                <li><a href="https://the-internet.herokuapp.com/status_codes/500" target="_blank" onclick="showResult(12, 'Navigated to Broken Link (500)')">Broken Link (Server Error - 500)</a></li>
             </ul>
+            <div class="result-box" id="res-12">Action Result: Awaiting Interaction...</div>
         </div>
     </div>
 
     <script>
+        // Universal function to update Result Boxes
+        function showResult(componentId, message) {
+            document.getElementById("res-" + componentId).innerText = "Action Result: " + message;
+        }
+
         // Drag and Drop
         function allowDrop(ev) { ev.preventDefault(); }
         function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
@@ -174,16 +194,19 @@
             document.getElementById("droppable").style.backgroundColor = "#2ecc71";
             document.getElementById("droppable").style.color = "white";
             document.getElementById("droppable").innerText = "Dropped!";
+            showResult(6, "Successfully dragged and dropped element!");
         }
 
         // Custom Dropdown
         function toggleDropdown() {
             var dropdown = document.getElementById("myDropdown");
             dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+            showResult(7, "Dropdown toggled (opened/closed)");
         }
         function selectItem(itemName) {
             document.getElementById("custom-drop-btn").innerHTML = itemName + " &#9660;";
             document.getElementById("myDropdown").style.display = "none";
+            showResult(7, "Custom item selected: " + itemName);
         }
 
         // Explicit Wait Simulation
@@ -191,9 +214,11 @@
             var btn = document.getElementById("start-wait-btn");
             btn.innerText = "Waiting for 5s...";
             btn.disabled = true;
+            showResult(10, "Timer started. Waiting for element to appear...");
             setTimeout(function() {
                 document.getElementById("hidden-target-btn").style.display = "inline-block";
                 btn.innerText = "Timer Finished";
+                showResult(10, "Element is now visible! Waiting for you to click it...");
             }, 5000);
         }
 
@@ -207,6 +232,10 @@
             </style>
             <button id="shadow-target-btn">Click me! I am inside a Shadow DOM!</button>
         `;
+        // Add listener to shadow DOM button
+        shadowRoot.getElementById('shadow-target-btn').addEventListener('click', function() {
+            showResult(11, "Success! You pierced the Shadow DOM and clicked the button!");
+        });
 
         // --- CUSTOM DATE PICKER LOGIC ---
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -229,28 +258,25 @@
                 currentYear--;
             }
             renderCalendar();
+            showResult(9, "Month changed to: " + months[currentMonthIndex] + " " + currentYear);
         }
 
         function renderCalendar() {
-            // Update Header
             document.getElementById("month-year-display").innerText = months[currentMonthIndex] + " " + currentYear;
-            
-            // Populate Days (Fixed to 31 days for simplicity in this practice widget)
             const daysGrid = document.getElementById("days-grid");
-            daysGrid.innerHTML = ""; // Clear existing
+            daysGrid.innerHTML = ""; 
             
             for (let i = 1; i <= 31; i++) {
                 let dayDiv = document.createElement("div");
                 dayDiv.className = "day-cell";
                 dayDiv.innerText = i;
                 
-                // Add click event to each day
                 dayDiv.onclick = function() {
                     let formattedDate = i + " " + months[currentMonthIndex] + " " + currentYear;
                     document.getElementById("datepicker-input").value = formattedDate;
-                    document.getElementById("calendar-container").style.display = "none"; // Close calendar
+                    document.getElementById("calendar-container").style.display = "none"; 
+                    showResult(9, "Date successfully picked: " + formattedDate);
                 };
-                
                 daysGrid.appendChild(dayDiv);
             }
         }
